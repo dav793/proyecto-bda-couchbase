@@ -1,8 +1,6 @@
 # Proyecto CouchbaseDB
 
-Este documento contiene instrucciones paso a paso para instalar y ejecutar un contenedor de Docker corriendo Debian 11.
-
-Une vez el contenedor esté corriendo, siga las instrucciones en `COUCHBASE_INSTALL_INSTRUCTIONS.md` para instalar y ejecutar Couchbase en el contenedor.
+Este documento contiene instrucciones paso a paso para instalar y ejecutar un contenedor de Docker corriendo Debian 11 y Couchbase DB.
 
 ## Instalar y ejecutar contenedor
 
