@@ -1,0 +1,30 @@
+version: '3.0' 
+
+services:
+  db-server:
+    container_name: ${NODE_1_NAME}
+    image: ${NODE_1_NAME}
+    build: 
+      context: ${WORKING_DIR}
+      dockerfile: proyecto-cdb-docker/Dockerfile
+    restart: "no"
+    networks:
+      - default-network
+    volumes:
+      - project-volume:/projects/couchbase-project
+      - "${WORKING_DIR}/proyecto-cdb-docker/logs/node1:/opt/couchbase/var/lib/couchbase/logs"
+    ports:
+      - "5984:5984"
+      - "8091-8096:8091-8096"
+      - "11210-11211:11210-11211"
+    command: [ "./noop.sh" ]
+
+networks:
+  default-network:
+    name: ${NETWORK_NAME}
+    external: true  
+  
+volumes:
+  project-volume:
+    name: ${VOLUME_NAME}
+    external: true

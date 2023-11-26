@@ -1,0 +1,7 @@
+# environment
+.env
+.env.bat
+
+# local files
+proyecto-cdb-docker/logs
+*.deb
