@@ -5,3 +5,4 @@
 # local files
 proyecto-cdb-docker/logs
 *.deb
+doc/time-test.txt

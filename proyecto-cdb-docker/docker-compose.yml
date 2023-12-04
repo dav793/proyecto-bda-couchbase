@@ -2,8 +2,8 @@ version: '3.0'
 
 services:
   db-server:
-    container_name: ${NODE_1_NAME}
-    image: ${NODE_1_NAME}
+    container_name: ${NODE_NAME}
+    image: ${NODE_NAME}
     build: 
       context: ${WORKING_DIR}
       dockerfile: proyecto-cdb-docker/Dockerfile
