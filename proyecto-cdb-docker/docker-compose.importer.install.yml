@@ -1,0 +1,25 @@
+version: '3.0' 
+
+services:
+  importer:
+    container_name: ${IMPORTER_CONTAINER_NAME}
+    image: ${IMPORTER_CONTAINER_NAME}
+    build: 
+      context: ${WORKING_DIR}
+      dockerfile: proyecto-cdb-docker/Dockerfile.importer
+    restart: "no"
+    networks:
+      - default-network
+    volumes:
+      - project-volume:/projects/couchbase-project
+    command: [ "./install.sh" ]
+
+networks:
+  default-network:
+    name: ${NETWORK_NAME}
+    external: true  
+  
+volumes:
+  project-volume:
+    name: ${VOLUME_NAME}
+    external: true

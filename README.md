@@ -8,15 +8,15 @@ Este documento contiene instrucciones paso a paso para instalar y ejecutar un co
 
     [Descargar Docker](https://docs.docker.com/get-docker/).
 
-2. Crear archivos de configuración
+2. Crear archivos de configuración y configurar variables del entorno
 
-    **Mac OS/Linux:**
+    Si utiliza **Mac OS/Linux**, debe copiar el archivo de configuración `.env.template` como se demuestra:
     ```bash
     cp .env.template .env
     nano .env
     ```
 
-    **Windows:**
+    Si utiliza **Windows**, debe copiar ambos archivos de configuración `.env.template` y `.env.bat.template` como se demuestra:
     ```cmd
     copy .env.template .env
     notepad .env
@@ -25,10 +25,18 @@ Este documento contiene instrucciones paso a paso para instalar y ejecutar un co
     notepad .env.bat
     ```
 
-    * WORKING_DIR : Ruta del filesystem al proyecto (este directorio).
+    Luego, para los archivos de configuración según su sistema operativo, deberá configurar las siguientes variables:
+
+    * WORKING_DIR : Ruta del filesystem al proyecto.
     * NETWORK_NAME : Nombre para la red de docker (puede usar valor por defecto).
     * VOLUME_NAME : Nombre para el volumen de docker (puede usar valor por defecto).
     * NODE_NAME : Nombre para el contenedor de docker que contiene el nodo de Couchbase (puede usar valor por defecto).
+    * IMPORTER_CONTAINER_NAME : Nombre para el contenedor de docker que importa los datos en la base de datos (puede usar valor por defecto).
+
+    Adicionalmente, las siguientes variables deben incluirse únicamente en `.env` y no en `.env.bat`:
+    * IMPORTER_SOURCE_FILES_DIR_MAG : Ruta al directorio que contiene los archivos de fuente de datos en formato `.csv` para el instrumento de
+    medición `mag_ACRF` (no cambiar).
+    * DATABASE_ADDR : Dirección asignada al contenedor de la base de datos (dejar en blanco por ahora).
 
 3. Crear red de docker (si no existe)
 
@@ -139,3 +147,7 @@ docker image rm %NODE_NAME%
 docker network rm %NETWORK_NAME%
 docker volume rm %VOLUME_NAME%
 ```
+
+## Importar datos
+
+Para correr el programa que importa los datos en la base de datos, ver `IMPORTER.md`.
