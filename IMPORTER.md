@@ -43,10 +43,10 @@ Adicionalmente **no** es necesario introducir la variable en el archivo `.env.ba
 Asegúrese que las siguientes tareas han sido completadas:
 * Los archivos de fuente de datos `.csv` se encuentran en el directorio `source-files/mag_ACRF`.
 * Configuró correctamente la dirección IP del contenedor de la base de datos en `.env`.
-* Ha creado previamente en la base de datos un bucket llamado `GOES`.
-* Ha creado previamente en la base de datos un scope llamado `magACRF`, contenido en el bucket `GOES`.
+* Ha creado previamente en la base de datos un *bucket* llamado `GOES`.
+* Ha creado previamente en la base de datos un *scope* llamado `magACRF`, contenido en el bucket `GOES`.
 
-Nota: Para crear el bucket y el scope en la base de datos puede utilizar el panel de administración en `http://localhost:8091/ui/index.html`.
+Nota: Para crear el *bucket* y el *scope* en la base de datos puede utilizar el panel de administración en `http://localhost:8091/ui/index.html`.
 
 Luego, ejecutar:
 
@@ -73,6 +73,7 @@ docker image rm %IMPORTER_CONTAINER_NAME%
 ## Extras
 
 * Abrir shell en contenedor
+
     **Mac OS/Linux:**
     ```bash
     source .env && docker exec -it ${IMPORTER_CONTAINER_NAME} /bin/sh
