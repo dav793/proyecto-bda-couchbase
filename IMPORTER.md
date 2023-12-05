@@ -38,15 +38,20 @@ DATABASE_ADDR=172.29.0.2
 
 Adicionalmente **no** es necesario introducir la variable en el archivo `.env.bat`, incluso si utiliza Windows.
 
+## Crear *bucket* mediante request al api REST de la base de datos
+
+```bash
+curl -X POST http://${DATABASE_ADDR}:8091/pools/default/buckets -u Administrator:12345678 -d name=GOES -d bucketType=couchbase -d ramQuota=512
+```
+
+Nota: Para crear el *bucket* en la base de datos también puede utilizar el panel de administración en `http://localhost:8091/ui/index.html`.
+
 ## Importar datos en la base de datos
 
 Asegúrese que las siguientes tareas han sido completadas:
 * Los archivos de fuente de datos `.csv` se encuentran en el directorio `source-files/mag_ACRF`.
 * Configuró correctamente la dirección IP del contenedor de la base de datos en `.env`.
 * Ha creado previamente en la base de datos un *bucket* llamado `GOES`.
-* Ha creado previamente en la base de datos un *scope* llamado `magACRF`, contenido en el bucket `GOES`.
-
-Nota: Para crear el *bucket* y el *scope* en la base de datos puede utilizar el panel de administración en `http://localhost:8091/ui/index.html`.
 
 Luego, ejecutar:
 

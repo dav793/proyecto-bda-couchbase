@@ -5,9 +5,6 @@ const axios = require('axios');
 const moment = require('moment');
 const { parse: csvParser } = require("csv-parse");
 
-// console.log(process.env.DATABASE_ADDR);
-// console.log(process.env.IMPORTER_SOURCE_FILES_DIR_MAG);
-
 const dbUsername = 'Administrator';
 const dbPassword = '12345678';
 
@@ -103,16 +100,19 @@ async function importSourceFiles() {
     // }
 
     // create scope
-    // const scopeResponse = await postRequest(
-    //     `http://${process.env.DATABASE_ADDR}:8091/pools/default/buckets/GOES/scopes`,
-    //     { name: 'magACRF' },
-    //     dbUsername,
-    //     dbPassword 
-    // );
-    // if (scopeResponse.status !== 200) {
-    //     console.error(`Request [create scope] failed with status ${scopeResponse.status}`);
-    //     return;
-    // }
+    const scopeResponse = await postRequest(
+        `http://${process.env.DATABASE_ADDR}:8093/query/service`,
+        { statement: 'CREATE SCOPE GOES.magACRF' },
+        dbUsername,
+        dbPassword 
+    );
+    if (scopeResponse.status !== 200) {
+        console.error(`Request [create scope] failed with status ${scopeResponse.response.status}: ${scopeResponse.response.statusText}`);
+        console.error('Errors:', scopeResponse.response.data.errors);
+        return;
+    }
+
+    await delay(100);   // necessary to avoid database errors
 
     // create collection
     const collectionResponse = await postRequest(
@@ -122,7 +122,8 @@ async function importSourceFiles() {
         dbPassword 
     );
     if (collectionResponse.status !== 200) {
-        console.error(`Request [create collection] failed with status ${collectionResponse.status}`);
+        console.error(`Request [create collection] failed with status ${collectionResponse.response.status}: ${collectionResponse.response.statusText}`);
+        console.error('Errors:', collectionResponse.response.data.errors);
         return;
     }
 
