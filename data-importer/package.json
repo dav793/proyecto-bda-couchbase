@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node src/index.js",
+    "start": "npm run data-import && npm run plot-mag && npm run plot-xr",
+    "data-import": "node src/data-import.js",
+    "plot-mag": "node src/plot_magACRF.js",
+    "plot-xr": "node src/plot_irradiance_xrsa1.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
