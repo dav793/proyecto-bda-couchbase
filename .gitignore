@@ -9,5 +9,3 @@ doc/time-test.txt
 
 # local files - data importer
 data-importer/node_modules
-data-importer/source-files/**/*
-!data-importer/source-files/.gitkeep

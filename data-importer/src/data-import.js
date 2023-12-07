@@ -50,8 +50,10 @@ const delay = (t, val) => new Promise(resolve => setTimeout(resolve, t, val));
 
 async function importSourceFiles() {
     const path_magACRF = path.join(__dirname, '..', process.env.IMPORTER_SOURCE_FILES_DIR_MAG);
+    const path_sac = path.join(__dirname, '..', process.env.IMPORTER_SOURCE_FILES_DIR_SAC);
     const path_irradiance_xrsa1 = path.join(__dirname, '..', process.env.IMPORTER_SOURCE_FILES_DIR_XR);
     const filesMag = await getFilesList(path_magACRF);
+    const filesSac = await getFilesList(path_sac);
     const filesXr = await getFilesList(path_irradiance_xrsa1);
 
     // parse files - mag
@@ -62,6 +64,15 @@ async function importSourceFiles() {
         return results;
     };
     const resultsMag = await parseTasksMag();
+
+    // parse files - sac
+    const parseTasksSac = async () => {
+        const results = await Promise.all(
+            filesSac.map(filename => csvStream( path.join(path_sac, filename) ))
+        );
+        return results;
+    };
+    const resultsSac = await parseTasksSac();
 
     // parse files - xr
     const parseTasksXr = async () => {
@@ -91,6 +102,34 @@ async function importSourceFiles() {
             reports: resultsMag[idx].map((parsed, idxReport) => ({
                 number: idxReport,
                 samples: parsed.map(value => parseFloat(value))
+            }))
+        };
+
+        return doc;
+    });
+
+    // create docs - sac
+    const docsSac = filesSac.map((filename, idx) => {
+        const str = filename.replace('solar_array_current_', '');
+        const tokens = [];
+        tokens.push(str.substring(0, 2));   // year
+        tokens.push(str.substring(2, 4));   // month
+        tokens.push(str.substring(4, 6));   // day
+        tokens.push(str.substring(7, 9));   // hours
+        tokens.push(str.substring(9, 11));  // minutes
+        tokens.push('00');                  // seconds
+
+        const date = moment(`20${tokens[0]}/${tokens[1]}/${tokens[2]} ${tokens[3]}:${tokens[4]}:${tokens[5]}`, 'YYYY/MM/DD H:mm:ss');
+
+        const doc = {
+            id: idx,
+            timestamp: date.toISOString(),
+            reports: resultsSac[idx].map((parsed, idxReport) => ({
+                number: idxReport,
+                samplesArray0: parseFloat(parsed[0]),
+                samplesArray1: parseFloat(parsed[1]),
+                samplesArray2: parseFloat(parsed[2]),
+                samplesArray3: parseFloat(parsed[3])
             }))
         };
 
@@ -148,6 +187,19 @@ async function importSourceFiles() {
         return;
     }
 
+    // create scope - sac
+    const scopeResponseSac = await postRequest(
+        `http://${process.env.DATABASE_ADDR}:8093/query/service`,
+        { statement: 'CREATE SCOPE GOES.solarArrayCurrent' },
+        dbUsername,
+        dbPassword 
+    );
+    if (scopeResponseSac.status !== 200) {
+        console.error(`Request [create scope sac] failed with status ${scopeResponseSac.response.status}: ${scopeResponseSac.response.statusText}`);
+        console.error('Errors:', scopeResponseSac.response.data.errors);
+        return;
+    }
+
     // create scope - xr
     const scopeResponseXr = await postRequest(
         `http://${process.env.DATABASE_ADDR}:8093/query/service`,
@@ -173,6 +225,19 @@ async function importSourceFiles() {
     if (collectionResponseMag.status !== 200) {
         console.error(`Request [create collection mag] failed with status ${collectionResponseMag.response.status}: ${collectionResponseMag.response.statusText}`);
         console.error('Errors:', collectionResponseMag.response.data.errors);
+        return;
+    }
+
+     // create collection - sac
+    const collectionResponseSac = await postRequest(
+        `http://${process.env.DATABASE_ADDR}:8093/query/service`,
+        { statement: 'CREATE COLLECTION GOES.solarArrayCurrent.measurements' },
+        dbUsername,
+        dbPassword 
+    );
+    if (collectionResponseSac.status !== 200) {
+        console.error(`Request [create collection sac] failed with status ${collectionResponseSac.response.status}: ${collectionResponseSac.response.statusText}`);
+        console.error('Errors:', collectionResponseSac.response.data.errors);
         return;
     }
 
@@ -204,6 +269,19 @@ async function importSourceFiles() {
         return;
     }
 
+    // create index - sac
+    const indexResponseSac = await postRequest(
+        `http://${process.env.DATABASE_ADDR}:8093/query/service`,
+        { statement: 'CREATE PRIMARY INDEX idx_sac_measurements_primary ON GOES.solarArrayCurrent.measurements USING GSI' },
+        dbUsername,
+        dbPassword 
+    );
+    if (indexResponseSac.status !== 200) {
+        console.error(`Request [create index sac] failed with status ${indexResponseSac.response.status}: ${indexResponseSac.response.statusText}`);
+        console.error('Errors:', indexResponseSac.response.data.errors);
+        return;
+    }
+
     // create index - xr
     const indexResponseXr = await postRequest(
         `http://${process.env.DATABASE_ADDR}:8093/query/service`,
@@ -229,6 +307,22 @@ async function importSourceFiles() {
     try {
         const responsesMag = await axios.all(insertionsMag);
         console.log(`Inserted ${responsesMag.length} documents in 'GOES.magACRF.measurements'`);
+    }
+    catch (err) {
+        console.error(err);
+        return;
+    }
+
+    // insert docs in database - sac
+    const insertionsSac = docsSac.map((doc, idx) => postRequest(
+        `http://${process.env.DATABASE_ADDR}:8093/query/service`,
+        { statement: `INSERT INTO GOES.solarArrayCurrent.measurements (KEY,VALUE) VALUES ("${idx}", ${JSON.stringify(doc)})` },
+        dbUsername,
+        dbPassword 
+    ));
+    try {
+        const responsesSac = await axios.all(insertionsSac);
+        console.log(`Inserted ${responsesSac.length} documents in 'GOES.solarArrayCurrent.measurements'`);
     }
     catch (err) {
         console.error(err);

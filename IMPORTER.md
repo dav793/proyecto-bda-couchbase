@@ -27,12 +27,8 @@ call ../.env.bat
 docker inspect -f {{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}} %NODE_NAME%
 ```
 
-Copiar la dirección obtenida e introducir en la variable `DATABASE_ADDR` del archivo de configuración `.env`. 
-
-Por ejemplo:
+Copiar la dirección obtenida e introducir el valor en la variable `DATABASE_ADDR` del archivo de configuración `.env` de la siguiente forma:
 ```
-...
-IMPORTER_SOURCE_FILES_DIR=source-files/mag_ACRF
 DATABASE_ADDR=172.29.0.2
 ```
 
@@ -49,7 +45,9 @@ Nota: Para crear el *bucket* en la base de datos también puede utilizar el pane
 ## Importar datos en la base de datos
 
 Asegúrese que las siguientes tareas han sido completadas:
-* Los archivos de fuente de datos `.csv` se encuentran en el directorio `source-files/mag_ACRF`.
+* Los archivos de fuente de datos (`.csv`) del instrumento total_mag_ACRF se encuentran en el directorio `source-files/mag_ACRF`.
+* Los archivos de fuente de datos (`.csv`) del instrumento solar_array_current se encuentran en el directorio `source-files/solar_array_current`.
+* Los archivos de fuente de datos (`.csv`) del instrumento irradiance_xrsa1 se encuentran en el directorio `source-files/irradiance_xrsa1`.
 * Configuró correctamente la dirección IP del contenedor de la base de datos en `.env`.
 * Ha creado previamente en la base de datos un *bucket* llamado `GOES`.
 
@@ -58,6 +56,19 @@ Luego, ejecutar:
 ```cmd
 docker compose --env-file ../.env -f ../proyecto-cdb-docker/docker-compose.importer.yml up
 ```
+
+## Ejecutar transformación de los datos y graficación
+
+Una vez importados los datos en la base de datos, ejecutar:
+
+```cmd
+docker compose --env-file ../.env -f ../proyecto-cdb-docker/docker-compose.plotter.yml up
+```
+
+Los resultados se generan en los siguientes archivos `.html`:
+* `/out/plot-mag.html`
+* `/out/plot-xr.html`
+* `/out/plot-sac.html`
 
 ## Desinstalar contenedor
 

@@ -1,4 +1,4 @@
 #!/bin/sh
 cd "$(dirname "$0")"    # use script location as working directory
 
-npm run data-import
+npm run plot-xr

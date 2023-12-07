@@ -36,6 +36,10 @@ Este documento contiene instrucciones paso a paso para instalar y ejecutar un co
     Adicionalmente, las siguientes variables deben incluirse únicamente en `.env` y no en `.env.bat`:
     * IMPORTER_SOURCE_FILES_DIR_MAG : Ruta al directorio que contiene los archivos de fuente de datos en formato `.csv` para el instrumento de
     medición `mag_ACRF` (no cambiar).
+    * IMPORTER_SOURCE_FILES_DIR_SAC : Ruta al directorio que contiene los archivos de fuente de datos en formato `.csv` para el instrumento de 
+    medición `solar_array_current` (no cambiar).
+    * IMPORTER_SOURCE_FILES_DIR_XR : Ruta al directorio que contiene los archivos de fuente de datos en formato `.csv` para el instrumento de
+    medición `irradiance_xrsa1` (no cambiar).
     * DATABASE_ADDR : Dirección asignada al contenedor de la base de datos (dejar en blanco por ahora).
 
 3. Crear red de docker (si no existe)
@@ -150,4 +154,4 @@ docker volume rm %VOLUME_NAME%
 
 ## Importar datos
 
-Para correr el programa que importa los datos en la base de datos, ver `IMPORTER.md`.
+Para correr el programa que importa los datos en la base de datos y los programas que transforman los datos y generan las gráficas, ver `IMPORTER.md`.

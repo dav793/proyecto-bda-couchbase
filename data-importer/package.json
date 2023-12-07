@@ -4,10 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "npm run data-import && npm run plot-mag && npm run plot-xr",
+    "start": "npm run data-import && npm run plot-mag && npm run plot-xr && npm run plot-sac",
     "data-import": "node src/data-import.js",
     "plot-mag": "node src/plot_magACRF.js",
     "plot-xr": "node src/plot_irradiance_xrsa1.js",
+    "plot-sac": "node src/plot_solar_array_current.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
